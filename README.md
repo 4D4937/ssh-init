@@ -26,8 +26,3 @@ vps-host
 root
 Fri Aug  1 14:32:00 UTC 2025
 ```
-
----
-
-If you want, I can make an **even shorter one-liner** README for GitHub’s main page.
-Do you want me to do that?
