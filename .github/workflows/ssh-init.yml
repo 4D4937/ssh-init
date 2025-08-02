@@ -1,7 +1,7 @@
 name: Init SSH Key and Connect
 
 on:
-  workflow_dispatch: # 手动触发
+  workflow_dispatch:
 
 jobs:
   init-ssh:
@@ -10,16 +10,14 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      # 1️⃣ 上传公钥到 VPS
-      - name: Copy Public Key to VPS (root login with password)
+      # 上传公钥
+      - name: Copy Public Key to VPS
         run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "\
-              mkdir -p ~/.ssh && \
-              echo '${{ secrets.SSH_PUBLIC_KEY }}' >> ~/.ssh/authorized_keys && \
-              chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" \
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} \
+          "mkdir -p ~/.ssh && echo '${{ secrets.SSH_PUBLIC_KEY }}' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
 
-      # 2️⃣ 在 Actions 中保存私钥
+      # 配置私钥
       - name: Set up Private Key for GitHub Action
         run: |
           mkdir -p ~/.ssh
@@ -27,6 +25,6 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      # 3️⃣ 测试免密连接
+      # 测试免密
       - name: Test SSH connection
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "hostname && uptime"
