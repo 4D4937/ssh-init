@@ -27,5 +27,5 @@ jobs:
 
       # 测试免密
       - name: Test SSH connection
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "hostname && uptime"
+        run: ssh root@${{ secrets.SSH_HOST }} "hostname && uptime"
 
